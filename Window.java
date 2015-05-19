@@ -1,6 +1,6 @@
 import javax.swing.JFrame;
-public class GameWindow extends JFrame {
-	public GameWindow(){
+public class Window extends JFrame {
+	public Window(){
 		setTitle("Baffle Box");
 		Screen screen = new Screen();
 		add(screen);
@@ -9,6 +9,7 @@ public class GameWindow extends JFrame {
 		pack();
 		setVisible(true);
 	}
-
-
+	public static void main(String[] args){
+		Window window = new Window();
+	}
 }
