@@ -1,11 +1,12 @@
 import javax.swing.JPanel;
-
 import java.util.Scanner;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -17,10 +18,11 @@ import javax.swing.Timer;
 
 public class Screen extends JPanel implements KeyListener{
 	Timer timer;
-	Scanner scan;
-	ArrayList screenObjects;
+	Scanner scan = new Scanner(System.in);
+	ArrayList<ScreenObject> screenObjects = new ArrayList<ScreenObject>();
 	public static int screenWidth = 400;
 	public static int screenHeight = 400;
+	
 	//initialize movement vectors 
 	public static Vector laserVector = new Vector(0,0);
 	
@@ -30,24 +32,46 @@ public class Screen extends JPanel implements KeyListener{
 	Image baffleImage;
 	double baffleAngle; //note: no baffle image
 	
+	//initialize background image
+	Image bgImage = Toolkit.getDefaultToolkit().createImage("graph.png");
+	
+	//initialize laser location
+	int laserLocation;
+
+	
 	public Screen()
 	{
 		System.out.println("How many Baffles would you like?");
 		int baffles = scan.nextInt();
 		System.out.println("Here are your moves: \n 1) Shoot \n 2) Guess \n 3) History");
-		setPreferredSize(new Dimension(300,300));
+		setPreferredSize(new Dimension(screenWidth,screenHeight));
 		setBackground(Color.white);
-		screenObjects = new ArrayList<ScreenObject>();
+		
 		timer = new javax.swing.Timer(25, new TimerListener());
 		timer.start();
-		// addBaffle();
-
+		
+		// add baffles to the screen
+		for (int i = 0; i < baffles; i++){
+			addBaffle();
+		}
+	}
+	
+	public void paintComponent(Graphics g)
+	{
+		screenWidth = this.getWidth();
+		screenHeight = this.getHeight();
+		super.paintComponent(g);
+		for (ScreenObject obj : screenObjects) 
+		{
+			obj.draw(g);
+		}
+		g.drawImage(bgImage, 0, 0, this);
 	}
 	
 	public void addBaffle(){
 		Random rand = new Random();
-		int x = rand.nextInt(10);
-		int y = rand.nextInt(10);
+		int x = rand.nextInt(9) + 1;
+		int y = rand.nextInt(9) + 1;
 		int determine = rand.nextInt(1);
 		if (determine == 1){
 			baffleAngle = 45;
@@ -105,12 +129,12 @@ public void keyTyped(KeyEvent event) {
 	case KeyEvent.VK_1:
 		// use the shoot method to shoot at the user input location
 		System.out.println("Where do you want the shot to go?");
-		int location = scan.nextInt();
-		while (location > 39){
+		laserLocation = scan.nextInt();
+		while (laserLocation > 39){
 			System.out.println("Please enter a valid location");
-			location = scan.nextInt();
+			laserLocation = scan.nextInt();
 		}
-		shoot(location);
+		shoot(laserLocation);
 		break;
 	
 	
